@@ -2,7 +2,7 @@ import re
 import itertools
 from copy import deepcopy, copy
 from collections import deque
-from typing import TYPE_CHECKING, Optional, Iterator, Any, List, Dict, Union
+from typing import TYPE_CHECKING, Optional, Iterator, Any, List, Dict, Union, Set
 
 from . import component as comp
 from . import rdltypes
@@ -22,7 +22,7 @@ class Node:
 
     """
 
-    def __init__(self, inst: comp.Component, env: 'RDLEnvironment', parent: Optional['Node']):
+    def __init__(self, inst: comp.Component, env: 'RDLEnvironment', parent: Optional['Node'], ignore=False):
         # Generic Node constructor.
         # Do not call directly. Use factory() static method instead
         self.env = env
@@ -59,7 +59,6 @@ class Node:
             else:
                 setattr(result, k, deepcopy(v, memo))
         return result
-
 
     @staticmethod
     def _factory(inst: comp.Component, env: 'RDLEnvironment', parent: Optional['Node']=None) -> 'Node':
@@ -657,6 +656,48 @@ class Node:
         Name of instantiated element
         """
         return self.inst.inst_name
+    
+    @property
+    def ignore(self) -> bool:
+        return self.inst.ignore
+    
+    def set_ignore(self, val:bool) -> None:
+        self.inst.ignore = val
+
+    @property
+    def unique(self) -> bool:
+        return self.inst.unique
+    
+    def set_unique(self, val:bool) -> None:
+        self.inst.unique = val
+
+    @property
+    def rebuild(self) -> bool:
+        return self.inst.rebuild
+
+    def set_rebuild(self, val:bool) -> None:
+        self.inst.rebuild = val
+    
+    @property
+    def ignore_idxes(self) -> Set[int]:
+        return self.inst.ignore_idxes
+
+    def append_ignore_idxes(self, val:List[int]) -> None:
+        self.inst.ignore_idxes.update(val)
+
+    @property
+    def gen_test(self) -> bool:
+        return self.inst.gen_test
+
+    def set_gen_test(self, val:bool) -> None:
+        self.inst.gen_test = val
+
+    @property
+    def run_test(self) -> bool:
+        return self.inst.run_test
+
+    def set_run_test(self, val:bool) -> None:
+        self.inst.run_test = val
 
     @property
     def type_name(self) -> Optional[str]:
